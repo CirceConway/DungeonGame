@@ -29,6 +29,7 @@ ADungeonGameCharacter::ADungeonGameCharacter()
 	// Configure character movement
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
+	GetMovementComponent()->GetNavAgentPropertiesRef().bCanCrouch = true;
 
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
 	// instead of recompiling to adjust them
@@ -86,6 +87,10 @@ void ADungeonGameCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADungeonGameCharacter::Look);
+
+		// Crouching
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &ADungeonGameCharacter::Crouch);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ADungeonGameCharacter::UnCrouch);
 	}
 	else
 	{
@@ -100,6 +105,7 @@ void ADungeonGameCharacter::Move(const FInputActionValue& Value)
 
 	if (Controller != nullptr)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("MOVING"));
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -126,5 +132,23 @@ void ADungeonGameCharacter::Look(const FInputActionValue& Value)
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
+	}
+}
+
+void ADungeonGameCharacter::Crouch(const FInputActionValue& Value)
+{
+	if (Controller != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TRIED TO CROUCH"));
+		ACharacter::Crouch();
+	}
+}
+
+void ADungeonGameCharacter::UnCrouch(const FInputActionValue& Value)
+{
+	if (Controller != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("TRIED TO UNCROUCH"));
+		ACharacter::UnCrouch();
 	}
 }
