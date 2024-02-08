@@ -139,7 +139,6 @@ void ADungeonGameCharacter::Crouch(const FInputActionValue& Value)
 {
 	if (Controller != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TRIED TO CROUCH"));
 		ACharacter::Crouch();
 	}
 }
@@ -148,7 +147,6 @@ void ADungeonGameCharacter::UnCrouch(const FInputActionValue& Value)
 {
 	if (Controller != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("TRIED TO UNCROUCH"));
 		ACharacter::UnCrouch();
 	}
 }
