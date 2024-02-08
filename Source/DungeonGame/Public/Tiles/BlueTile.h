@@ -3,15 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Tiles/Tile.h"
 
 /**
  * 
  */
-class DUNGEONGAME_API Tile
+class DUNGEONGAME_API BlueTile : Tile
 {
 public:
-	Tile();
-	~Tile();
-
-	virtual void Spawn() = 0;
+	BlueTile();
+	~BlueTile();
 };

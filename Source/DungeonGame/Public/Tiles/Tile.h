@@ -7,9 +7,11 @@
 /**
  * 
  */
-class DUNGEONGAME_API BlueTile
+class DUNGEONGAME_API Tile
 {
 public:
-	BlueTile();
-	~BlueTile();
+	Tile();
+	~Tile();
+
+	virtual void Spawn();
 };
