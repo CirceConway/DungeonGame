@@ -12,7 +12,16 @@ BlueTile::~BlueTile()
 {
 }
 
-void Spawn()
+void BlueTile::GetMesh()
 {
-	
+}
+
+Connections* BlueTile::GetConnections()
+{
+	return nullptr;
+}
+
+Tile* BlueTile::GetValidNeighbors()
+{
+	return nullptr;
 }

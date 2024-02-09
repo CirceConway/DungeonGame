@@ -12,6 +12,7 @@ class ALevelGenerator : public AActor
 	GENERATED_BODY()
 	
 public:	
+
 	// Sets default values for this actor's properties
 	ALevelGenerator();
 
@@ -21,7 +22,7 @@ protected:
 
 	//Creates paths of the floor, returns int array of [size * size]
 	//Each index represents space for one potential room
-	void CreateFloorGraph(int size);
+	voronoiGraph CreateVoronoi(int points);
 
 	//Use given graph to spawn tiles in the world
 	void SpawnTilesFromGraph(int &graph);

@@ -3,6 +3,14 @@
 
 #include "LevelGenerator.h"
 
+const int xSize = 100;
+const int ySize = 100;
+//const int z_size = 100;
+
+struct voronoiGraph {
+	int graph[xSize][ySize];
+};
+
 // Sets default values
 ALevelGenerator::ALevelGenerator()
 {
@@ -20,13 +28,33 @@ void ALevelGenerator::BeginPlay()
 
 //Creates paths of the floor, returns int array of [size * size]
 //Each index represents space for one potential room
-void ALevelGenerator::CreateFloorGraph(int size)
+voronoiGraph CreateVoronoi(int points)
 {
-	;
+	voronoiGraph voronoi;
+
+	for (int i = 0; i < points; i++)
+	{
+		bool success = false;
+
+		while (!success)
+		{
+			int randX = rand() % xSize;
+			int randY = rand() % ySize;
+			if (voronoi.graph[randX][randY] == 0)
+			{
+				voronoi.graph[randX][randY] = 1;
+				success = true;
+			}
+		}
+
+		
+	}
+
+	return voronoi;
 }
 
 //Use given graph to spawn rooms in the world
-void ALevelGenerator::SpawnTilesFromGraph(int &graph)
+void SpawnTilesFromGraph(int &graph)
 {
 	;
 }
