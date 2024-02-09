@@ -13,4 +13,5 @@ class DUNGEONGAME_API BlueTile : Tile
 public:
 	BlueTile();
 	~BlueTile();
+
 };

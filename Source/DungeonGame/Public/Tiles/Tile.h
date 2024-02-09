@@ -13,5 +13,10 @@ public:
 	Tile();
 	~Tile();
 
-	virtual void Spawn();
+	virtual void GetMesh() = 0;
+
+	virtual void GetConnections() = 0;
+
+	virtual void GetValidNeighbors() = 0;
+
 };

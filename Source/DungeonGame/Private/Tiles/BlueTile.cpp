@@ -2,6 +2,7 @@
 
 
 #include "Tiles/BlueTile.h"
+#include "Engine/World.h"
 
 BlueTile::BlueTile()
 {
@@ -9,4 +10,9 @@ BlueTile::BlueTile()
 
 BlueTile::~BlueTile()
 {
+}
+
+void Spawn()
+{
+	
 }
