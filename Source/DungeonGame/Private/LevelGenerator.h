@@ -41,7 +41,7 @@ public:
 	class VoronoiGraph {
 	public:
 		int graph[xSize][ySize];
-		struct Point pointList[numPoints];
+		struct Point seedsList[numPoints];
 
 		void SetPoint(struct Point p, int val)
 		{
@@ -61,6 +61,8 @@ protected:
 	//Creates paths of the floor, returns int array of [size * size]
 	//Each index represents space for one potential room
 	VoronoiGraph CreateVoronoi();
+
+	void TraceEdges(VoronoiGraph* graph);
 
 	//Use given graph to spawn tiles in the world
 	void SpawnTilesFromGraph(VoronoiGraph graph);
