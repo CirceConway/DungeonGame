@@ -8,6 +8,20 @@
 
 //const static int numPoints = 8;
 
+
+
+void ALevelGenerator::SpawnTestTile()
+{
+	//FActorSpawnParameters SpawnParams;
+
+	UE_LOG(LogTemp, Warning, TEXT("SPAWNING TEST TILE"));
+
+	if (BP_testTile)
+	{
+		ATestTile* tileRef = GetWorld()->SpawnActor<ATestTile>(BP_testTile, GetTransform());
+	}
+}
+
 // Sets default values
 ALevelGenerator::ALevelGenerator()
 {
@@ -38,7 +52,7 @@ ALevelGenerator::VoronoiGraph ALevelGenerator::CreateVoronoi()
 
 		while (!success)
 		{
-			struct Point point(rand() % xSize, rand() % ySize);
+			struct Point point((rand() % xSize-1) + 1, (rand() % ySize - 1) + 1);
 
 			if (voronoi.graph[point.x][point.y] != 9)
 			{
@@ -88,9 +102,15 @@ void ALevelGenerator::TraceEdges(VoronoiGraph* graph)
 		for (int k = 0; k < ySize - 1; k++)
 		{
 			struct Point p(i, k);
-			if ((graph->graph[i][k] == graph->graph[i][k + 1]) && (graph->graph[i][k] != 9) && (graph->graph[i][k] == graph->graph[i + 1][k]))
+			if ((graph->graph[i][k] == graph->graph[i][k + 1]) && (graph->graph[i][k] == graph->graph[i + 1][k]))
 			{
 				graph->SetPoint(p, 0);
+			}
+			else if (graph->graph[i][k] == 9)
+			{
+				graph->SetPoint(p, 0);
+				graph->SetPoint(Point(i-1, k), 0);
+				graph->SetPoint(Point(i, k-1), 0);
 			}
 			else
 			{
@@ -131,16 +151,26 @@ void ALevelGenerator::SpawnTilesFromGraph(VoronoiGraph graph)
 	for (int i = 0; i < xSize; i++)
 	{
 		//This was for printing the voronoi to console
-		std::string printString = "";
+		//std::string printString = "";
 		for (int k = 0; k < ySize; k++)
 		{
+			if (graph.graph[i][k] == 1)
+			{
+				FVector spawnLocation = GetTransform().GetLocation();
+				FVector spawnOffset = FVector(i * 1200.0, k * 1200.0, 0.0);
 
+				spawnLocation += spawnOffset;
+
+				//FTransform spawnTransform = FTransform(spawnLocation)
+
+				ATestTile* tileRef = GetWorld()->SpawnActor<ATestTile>(BP_testTile, FTransform(spawnLocation));
+			}
 			//This was for printing the voronoi to console
-			printString.append(std::to_string(graph.graph[i][k]));
+			//printString.append(std::to_string(graph.graph[i][k]));
 			
 		}
 		//This was for printing the voronoi to console
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(printString.c_str()));
+		//UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(printString.c_str()));
 	}
 }
 
@@ -149,10 +179,12 @@ void ALevelGenerator::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//SpawnTestTile();
+
 	UE_LOG(LogTemp, Warning, TEXT("STARTING THE CREATION PROCESS"));
 	VoronoiGraph myVoronoi = CreateVoronoi();
-	UE_LOG(LogTemp, Warning, TEXT("FINISHED CREATION, STARTING TRACE"));
-	SpawnTilesFromGraph(myVoronoi);
+	//UE_LOG(LogTemp, Warning, TEXT("FINISHED CREATION, STARTING TRACE"));
+	//SpawnTilesFromGraph(myVoronoi);
 	TraceEdges(&myVoronoi);
 	SpawnTilesFromGraph(myVoronoi);
 

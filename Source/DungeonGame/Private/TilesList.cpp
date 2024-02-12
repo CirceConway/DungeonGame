@@ -1,12 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Tiles/Tile.h"
+#include "TilesList.h"
 
-Tile::Tile()
+TilesList::TilesList()
 {
+	;
 }
 
-Tile::~Tile()
+TilesList::~TilesList()
 {
+	;
 }

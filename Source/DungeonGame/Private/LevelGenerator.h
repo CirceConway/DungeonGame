@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "TilesList.h"
+#include "Tiles/TestTile.h"
 #include "LevelGenerator.generated.h"
-
 
 UCLASS()
 class ALevelGenerator : public AActor
@@ -13,6 +14,12 @@ class ALevelGenerator : public AActor
 	GENERATED_BODY()
 
 public:	
+
+	UPROPERTY(EditDefaultsOnly, Category = "ActorSpawning")
+	TSubclassOf<ATestTile> BP_testTile;
+
+	UFUNCTION()
+	void SpawnTestTile();
 
 	const static int xSize = 50;
 	const static int ySize = 50;
@@ -51,8 +58,6 @@ public:
 
 	// Sets default values for this actor's properties
 	ALevelGenerator();
-
-	//
 
 protected:
 	// Called when the game starts or when spawned
