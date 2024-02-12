@@ -54,10 +54,12 @@ ALevelGenerator::VoronoiGraph ALevelGenerator::CreateVoronoi()
 		{
 			struct Point point((rand() % xSize-1) + 1, (rand() % ySize - 1) + 1);
 
-			if (voronoi.graph[point.x][point.y] != 9)
+			if (voronoi.graph[point.x][point.y] != -1)
 			{
-				voronoi.SetPoint(point, 9);
+				voronoi.SetPoint(point, -1);
 				voronoi.seedsList[i] = point;
+
+				UE_LOG(LogTemp, Warning, TEXT("Placed Seed %d at (%d, %d)"), i, point.x, point.y);
 
 				success = true;
 			}
@@ -82,11 +84,11 @@ ALevelGenerator::VoronoiGraph ALevelGenerator::CreateVoronoi()
 					shortestIndex = j;
 				}
 			}
-			if (voronoi.graph[p1.x][p1.y] != 9)
+			if (voronoi.graph[p1.x][p1.y] != -1)
 			{
 				voronoi.SetPoint(p1, shortestIndex + 2);
+				UE_LOG(LogTemp, Warning, TEXT("Point (%d, %d) is %d"), p1.x, p1.y, voronoi.graph[p1.x][p1.y]);
 			}
-			
 		}
 	}
 
@@ -94,7 +96,7 @@ ALevelGenerator::VoronoiGraph ALevelGenerator::CreateVoronoi()
 }
 
 //Scans left to right, marking the locations where numbers change with a 1, and everything else with a 0
-//All 9s become 1s
+//All -1s become 0s
 void ALevelGenerator::TraceEdges(VoronoiGraph* graph)
 {
 	for (int i = 0; i < xSize - 1; i++)
@@ -102,15 +104,16 @@ void ALevelGenerator::TraceEdges(VoronoiGraph* graph)
 		for (int k = 0; k < ySize - 1; k++)
 		{
 			struct Point p(i, k);
-			if ((graph->graph[i][k] == graph->graph[i][k + 1]) && (graph->graph[i][k] == graph->graph[i + 1][k]))
+			if (((graph->graph[i][k] == graph->graph[i][k + 1]) 
+				&& (graph->graph[i][k] == graph->graph[i + 1][k])) 
+				|| (graph->graph[i + 1][k] == -1) 
+				|| (graph->graph[i][k + 1] == -1))
 			{
 				graph->SetPoint(p, 0);
 			}
-			else if (graph->graph[i][k] == 9)
+			else if (graph->graph[i][k] == -1)
 			{
 				graph->SetPoint(p, 0);
-				graph->SetPoint(Point(i-1, k), 0);
-				graph->SetPoint(Point(i, k-1), 0);
 			}
 			else
 			{
@@ -130,7 +133,7 @@ void ALevelGenerator::TraceEdges(VoronoiGraph* graph)
 	for (int k = 0; k < ySize - 1; k++)
 	{
 		struct Point p(xSize - 1, k);
-		if ((graph->graph[xSize - 1][k] == graph->graph[xSize - 1][k + 1]) && (graph->graph[xSize - 1][k] != 9))
+		if ((graph->graph[xSize - 1][k] == graph->graph[xSize - 1][k + 1]) && (graph->graph[xSize - 1][k] != -1))
 		{
 			graph->SetPoint(p, 0);
 		}
@@ -150,8 +153,6 @@ void ALevelGenerator::SpawnTilesFromGraph(VoronoiGraph graph)
 {
 	for (int i = 0; i < xSize; i++)
 	{
-		//This was for printing the voronoi to console
-		//std::string printString = "";
 		for (int k = 0; k < ySize; k++)
 		{
 			if (graph.graph[i][k] == 1)
@@ -161,18 +162,29 @@ void ALevelGenerator::SpawnTilesFromGraph(VoronoiGraph graph)
 
 				spawnLocation += spawnOffset;
 
-				//FTransform spawnTransform = FTransform(spawnLocation)
-
 				ATestTile* tileRef = GetWorld()->SpawnActor<ATestTile>(BP_testTile, FTransform(spawnLocation));
 			}
-			//This was for printing the voronoi to console
-			//printString.append(std::to_string(graph.graph[i][k]));
-			
+
 		}
-		//This was for printing the voronoi to console
-		//UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(printString.c_str()));
 	}
 }
+
+//Print to console for debugging
+void ALevelGenerator::PrintGraphToConsole(VoronoiGraph graph)
+{
+	for (int i = 0; i < xSize; i++)
+	{
+		std::string printString = "";
+
+		for (int k = 0; k < ySize; k++)
+		{
+			printString.append(std::to_string(graph.graph[i][k]));
+		}
+
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(printString.c_str()));
+	}
+}
+
 
 // Called when the game starts or when spawned
 void ALevelGenerator::BeginPlay()
@@ -181,11 +193,12 @@ void ALevelGenerator::BeginPlay()
 
 	//SpawnTestTile();
 
-	UE_LOG(LogTemp, Warning, TEXT("STARTING THE CREATION PROCESS"));
+	//UE_LOG(LogTemp, Warning, TEXT("STARTING THE CREATION PROCESS"));
 	VoronoiGraph myVoronoi = CreateVoronoi();
 	//UE_LOG(LogTemp, Warning, TEXT("FINISHED CREATION, STARTING TRACE"));
-	//SpawnTilesFromGraph(myVoronoi);
+	PrintGraphToConsole(myVoronoi);
 	TraceEdges(&myVoronoi);
+	PrintGraphToConsole(myVoronoi);
 	SpawnTilesFromGraph(myVoronoi);
 
 }

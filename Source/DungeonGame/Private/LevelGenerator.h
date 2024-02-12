@@ -21,11 +21,14 @@ public:
 	UFUNCTION()
 	void SpawnTestTile();
 
+	
 	const static int xSize = 50;
 	const static int ySize = 50;
 	const static int zSize = 50;
 
-	const static int numPoints = 6;
+	const static int tileSize = 1200;
+	
+	const static int numPoints = 7;
 
 	struct Point {
 		int x, y;
@@ -54,6 +57,17 @@ public:
 		{
 			graph[p.x][p.y] = val;
 		}
+
+		VoronoiGraph()
+		{
+			for (int i = 0; i < xSize; i++)
+			{
+				for (int k = 0; k < ySize; k++)
+				{
+					graph[i][k] = 0;
+				}
+			}
+		}
 	};
 
 	// Sets default values for this actor's properties
@@ -71,6 +85,8 @@ protected:
 
 	//Use given graph to spawn tiles in the world
 	void SpawnTilesFromGraph(VoronoiGraph graph);
+
+	void PrintGraphToConsole(VoronoiGraph graph);
 
 	int CalcManhattanDistance(struct Point p1, struct Point p2);
 
