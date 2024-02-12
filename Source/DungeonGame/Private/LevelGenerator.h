@@ -27,35 +27,37 @@ public:
 	const static int zSize = 50;
 
 	const static int tileSize = 1200;
+	const static int tileHeight = 480;
 	
-	const static int numPoints = 7;
+	const static int numPoints = 15;
 
 	struct Point {
-		int x, y;
-		//int z;
+		int x, y, z;
 
-		Point(int x, int y)
+		Point(int x, int y, int z)
 		{
 			this->x = x;
 			this->y = y;
+			this->z = z;
 		}
 
 		Point()
 		{
 			x = 0;
 			y = 0;
+			z = 0;
 		}
 
 	};
 
 	class VoronoiGraph {
 	public:
-		int graph[xSize][ySize];
+		int graph[xSize][ySize][zSize];
 		struct Point seedsList[numPoints];
 
 		void SetPoint(struct Point p, int val)
 		{
-			graph[p.x][p.y] = val;
+			graph[p.x][p.y][p.z] = val;
 		}
 
 		VoronoiGraph()
@@ -64,7 +66,11 @@ public:
 			{
 				for (int k = 0; k < ySize; k++)
 				{
-					graph[i][k] = 0;
+					for (int j = 0; j < zSize; j++)
+					{
+						graph[i][k][j] = 0;
+					}
+					
 				}
 			}
 		}
