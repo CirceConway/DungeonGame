@@ -21,15 +21,20 @@ public:
 	UFUNCTION()
 	void SpawnTestTile();
 
-	
-	const static int xSize = 50;
-	const static int ySize = 50;
-	const static int zSize = 50;
+	UPROPERTY(EditDefaultsOnly, Category = "Generation Settings")
+	int xSize;
+	UPROPERTY(EditDefaultsOnly, Category = "Generation Settings")
+	int ySize;
+	UPROPERTY(EditDefaultsOnly, Category = "Generation Settings")
+	int zSize;
 
-	const static int tileSize = 1200;
-	const static int tileHeight = 480;
+	UPROPERTY(EditDefaultsOnly, Category = "Generation Settings")
+	int tileSize;
+	UPROPERTY(EditDefaultsOnly, Category = "Generation Settings")
+	int tileHeight;
 	
-	const static int numPoints = 15;
+	UPROPERTY(EditDefaultsOnly, Category = "Generation Settings")
+	int numSeeds;
 
 	struct Point {
 		int x, y, z;
@@ -51,29 +56,55 @@ public:
 	};
 
 	class VoronoiGraph {
+	private:
+		int xSize, ySize, zSize;
+		int numSeeds;
+
+		int* graph = new int[xSize * ySize * zSize];
+
 	public:
-		int graph[xSize][ySize][zSize];
-		struct Point seedsList[numPoints];
+		
+		struct Point *seedsList = new struct Point[numSeeds];
 
 		void SetPoint(struct Point p, int val)
 		{
-			graph[p.x][p.y][p.z] = val;
+			graph[p.x 
+				+ p.y * ySize 
+				+ p.z * ySize * zSize] = val;
 		}
 
-		VoronoiGraph()
+		int GetPoint(struct Point p)
 		{
-			for (int i = 0; i < xSize; i++)
+			return graph[p.x
+				+ p.y * ySize
+				+ p.z * ySize * zSize];
+		}
+		int GetPoint(int x, int y, int z)
+		{
+			return graph[x
+				+ y * ySize
+				+ z * ySize * zSize];
+		}
+
+		VoronoiGraph(int xSize, int ySize, int zSize, int numSeeds)
+		{
+			this->xSize = xSize;
+			this->ySize = ySize;
+			this->zSize = zSize;
+			this->numSeeds = numSeeds;
+
+			for (int i = 0; i < xSize * ySize * zSize; i++)
 			{
-				for (int k = 0; k < ySize; k++)
-				{
-					for (int j = 0; j < zSize; j++)
-					{
-						graph[i][k][j] = 0;
-					}
-					
-				}
+				graph[i] = 0;
 			}
 		}
+
+		~VoronoiGraph()
+		{
+			//delete[] graph;
+		}
+
+
 	};
 
 	// Sets default values for this actor's properties
@@ -87,7 +118,9 @@ protected:
 	//Each index represents space for one potential room
 	VoronoiGraph CreateVoronoi();
 
-	void TraceEdges(VoronoiGraph* graph);
+	void TraceEdges_BAD(VoronoiGraph* graph);
+
+	VoronoiGraph ConvolutionalTrace(VoronoiGraph graph);
 
 	//Use given graph to spawn tiles in the world
 	void SpawnTilesFromGraph(VoronoiGraph graph);
@@ -95,6 +128,10 @@ protected:
 	void PrintGraphToConsole(VoronoiGraph graph);
 
 	int CalcManhattanDistance(struct Point p1, struct Point p2);
+
+	int CalcPythagoreanDistance(struct Point p1, struct Point p2);
+
+	void EndGeneration(VoronoiGraph* graph);
 
 	// Called every frame
 	//virtual void Tick(float DeltaTime) override;
