@@ -3,13 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "VoronoiGraph.generated.h"
 
 /**
  * 
  */
 
+USTRUCT()
 struct Point
 {
+
+	GENERATED_BODY()
+
 	int x, y, z;
 
 	Point(int x, int y, int z)
@@ -42,8 +47,12 @@ struct Point
 	}
 };
 
+UCLASS()
 class DUNGEONGAME_API VoronoiGraph
 {
+
+	GENERATED_BODY()
+
 public:
 	/*
 	struct Point {
