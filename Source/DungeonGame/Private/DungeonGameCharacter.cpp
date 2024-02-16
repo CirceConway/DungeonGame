@@ -105,7 +105,6 @@ void ADungeonGameCharacter::Move(const FInputActionValue& Value)
 
 	if (Controller != nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("MOVING"));
 		// find out which way is forward
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
